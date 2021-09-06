@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:http="http://www.mulesoft.org/schema/mule/http" xmlns="http://www.mulesoft.org/schema/mule/core"
+	xmlns:doc="http://www.mulesoft.org/schema/mule/documentation"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd">
+	<http:listener-config name="HTTP_Listener_config" doc:name="HTTP Listener config" doc:id="a685ca49-6084-44f6-9f91-4dd143aa846a" >
+		<http:listener-connection host="0.0.0.0" port="8081" />
+	</http:listener-config>
+	<flow name="sampleFlow" doc:id="013df1f6-3290-4e7b-b349-2cb0048ce261" >
+		<http:listener doc:name="Listener" doc:id="e26a8d02-90dd-4c86-9b06-2c0cde5e6e01" config-ref="HTTP_Listener_config" path="sample"/>
+		<logger level="INFO" doc:name="Logger" doc:id="121a4942-e03e-4d84-bc10-30df3dfe1640" message="flow start log"/>
+		<set-variable value="Main flow variable" doc:name="Set Variable" doc:id="1853dd93-7fa7-4232-a030-6f2310640495" variableName="mainVar"/>
+		<set-payload value="flow-payload" doc:name="Set Payload" doc:id="9719a6df-a583-4026-8070-12cd95ca4d7d" />
+		<async doc:name="Async" doc:id="7d61b2dc-ed0f-4e32-a87d-dd8f551f2020" >
+			<flow-ref doc:name="Flow Reference" doc:id="aaf58683-bf6f-4b3a-aded-dbc87444a16e" name="sampleSub_Flow" />
+		</async>
+		<flow-ref doc:name="Flow Reference" doc:id="acd96a85-131a-44af-bf49-c904cc622031" name="sampleprivateflow"/>
+		<logger level="INFO" doc:name="Logger" doc:id="a6dc4dd7-eea8-4600-9623-501fc3fd1ddb" message="flow end log - subflow payload #[payload] subflow variable :#[vars.subFlowVar]"/>
+	</flow>
+	<flow name="sampleprivateflow" doc:id="5e8514eb-30d6-4a26-851b-92907f2527df" >
+		<logger level="INFO" doc:name="Logger" doc:id="a1b6ab85-b47f-4b25-ba91-6efdd419ea48" message="private flow start log"/>
+	</flow>
+	<sub-flow name="sampleSub_Flow" doc:id="8b64bfbe-666d-4d97-abb1-c19712c4fd14" >
+		<try doc:name="Try" doc:id="896be6ef-e174-4963-9a08-cf67aa008f2f" >
+			<logger level="INFO" doc:name="Logger" doc:id="3c6cc5b3-a0a6-4733-9b4e-31e5ddab44fc" message="subflow start log - #[payload]" />
+			<set-variable value="sub flow variable" doc:name="Set Variable" doc:id="fa224f4e-9168-4441-8658-66e0a816bf22" variableName="subFlowVar" />
+			<logger level="INFO" doc:name="Logger" doc:id="a23538c5-d7c3-41c1-b6f1-636e1f4662ad" message="subflow end log and main flow variable is :#[vars.mainVar]" />
+			<set-payload value="subflow -payload" doc:name="Set Payload" doc:id="dbb7815c-6b49-48ba-9e21-15e5b4c4a70f" />
+		</try>
+	</sub-flow>
+</mule>
